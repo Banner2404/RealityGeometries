@@ -51,6 +51,27 @@ public extension RealityGeometry {
         return (try MeshResource.generate(from: [meshDescr]), lineLength)
     }
 
+    /// Create a mesh descriptor representing a thick line following a series of points in 3D space.
+    ///
+    /// - Parameters:
+    ///   - points: Points that the tube will follow through
+    ///   - radius: Radius of the line or tube
+    ///   - edges: Number of edges the extended shape should have, recommend at least 3, default is 12.
+    /// - Returns: Returns a MeshDescriptor of the new tube!
+    static func lineMeshDescriptor(
+        points: [SIMD3<Float>], radius: Float, edges: Int = 12
+    ) throws -> MeshDescriptor {
+
+        guard let ((geomParts, indices), lineLength) = getAllLineParts(
+            points: points, radius: radius,
+            edges: edges
+        ) else { throw MeshError.invalidInput }
+        guard !geomParts.isEmpty else {
+            throw MeshError.invalidInput
+        }
+        return geomParts.generateMeshDescriptor(with: indices)
+    }
+
     /// Get the quaternion that converts the start vector to the end vector.
     /// - Parameters:
     ///   - start: Current direction of the vector
